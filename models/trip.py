@@ -1,25 +1,68 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+# assuming db is initialized in your app (extensions or __init__.py)
+# from app.extensions import db
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
-    trips = db.relationship('Trip', backref='owner', lazy=True)
 
 class Trip(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    start_date = db.Column(db.Date)
-    end_date = db.Column(db.Date)
-    stops = db.relationship('Stop', backref='trip', lazy=True, cascade="all, delete-orphan")
+    __tablename__ = 'trips'
 
-class Stop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    trip_id = db.Column(db.Integer, db.ForeignKey('trip.id'), nullable=False)
-    city_name = db.Column(db.String(100), nullable=False) # cite: 51
-    order_index = db.Column(db.Integer) # For reordering cities (cite: 51)
-    arrival_date = db.Column(db.Date)
+
+    # basic info
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+
+    # who created / owns the trip
+    user_id = db.Column(db.Integer, nullable=False)
+
+    # destination (can be linked to City model optionally)
+    city_id = db.Column(db.Integer, nullable=True)
+    destination = db.Column(db.String(150), nullable=False)
+    country = db.Column(db.String(100), nullable=True)
+
+    # trip dates
+    start_date = db.Column(db.DateTime, nullable=True)
+    end_date = db.Column(db.DateTime, nullable=True)
+
+    # budget tracking
+    budget = db.Column(db.Float, default=0.0)
+    total_spent = db.Column(db.Float, default=0.0)
+
+    # status
+    status = db.Column(db.String(50), default="planned")  # planned, ongoing, completed
+
+    # optional metadata
+    travelers_count = db.Column(db.Integer, default=1)
+
+    # timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # relationships (optional, enable when models are fully wired)
+    # activities = db.relationship('Activity', backref='trip', lazy=True)
+    # expenses = db.relationship('Expense', backref='trip', lazy=True)
+    # packing_items = db.relationship('PackingItem', backref='trip', lazy=True)
+
+    def __repr__(self):
+        return f"<Trip {self.title} - {self.destination}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "user_id": self.user_id,
+            "city_id": self.city_id,
+            "destination": self.destination,
+            "country": self.country,
+            "start_date": self.start_date.isoformat() if self.start_date else None,
+            "end_date": self.end_date.isoformat() if self.end_date else None,
+            "budget": self.budget,
+            "total_spent": self.total_spent,
+            "status": self.status,
+            "travelers_count": self.travelers_count,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }

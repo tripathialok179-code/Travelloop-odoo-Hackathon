@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from config import Config
 from models.trip import db
 from routes.auth import auth_bp
+from routes.ai import ai_bp
 
 def create_app():
     app = Flask(__name__)
@@ -11,6 +12,7 @@ def create_app():
 
     # Register Blueprints
     app.register_blueprint(auth_bp)
+    app.register_blueprint(ai_bp)
 
     @app.route('/')
     def dashboard():
