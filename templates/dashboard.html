@@ -1,30 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Traveloop | Dashboard</title>
-</head>
-<body class="bg-gray-50">
-    <nav class="bg-white border-b p-4 flex justify-between items-center">
-        <span class="text-2xl font-extrabold text-blue-600">Traveloop</span>
-        <div class="space-x-4">
-            <a href="/profile" class="text-gray-600">Profile</a>
-            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg">Plan New Trip</button>
+{% extends 'layout.html' %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-10">
+    <header class="flex justify-between items-center mb-12">
+        <div>
+            <h1 class="text-4xl font-bold text-slate-900">Welcome back, Alok!</h1> <p class="text-slate-500 mt-1">You have 3 upcoming adventures.</p>
         </div>
-    </nav>
+        <a href="/create-trip" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-indigo-200 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Plan New Trip </a>
+    </header>
 
-    <main class="max-w-6xl mx-auto mt-10 p-4">
-        <h1 class="text-3xl font-bold">Welcome, Traveler!</h1> <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 class="font-bold text-lg">Upcoming Trips</h3>
-                <p class="text-gray-500 mt-2">You have 0 active trips. Start dreaming!</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="glass p-8 rounded-3xl">
+            <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Total Budget</p>
+            <h3 class="text-3xl font-bold text-slate-800">$4,250</h3> </div>
+        <div class="glass p-8 rounded-3xl border-l-4 border-indigo-500">
+            <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Active Trips</p>
+            <h3 class="text-3xl font-bold text-slate-800">02</h3>
+        </div>
+        <div class="glass p-8 rounded-3xl">
+            <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Completed</p>
+            <h3 class="text-3xl font-bold text-slate-800">12</h3>
+        </div>
+    </div>
+
+    <h2 class="text-2xl font-bold mb-6">Your Recent Trips</h2>
+    <div id="dashboard-trip-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
+            <div class="h-48 bg-slate-200 relative overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-indigo-600 uppercase">Upcoming</span>
             </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 class="font-bold text-lg">Budget Highlights</h3> <p class="text-gray-500 mt-2">View your cost breakdowns here.</p>
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">Euro Summer Tour</h3>
+                <p class="text-slate-500 text-sm mb-4">June 12 - June 28 • 4 Cities</p>
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <span class="font-bold text-indigo-600">$2,400</span>
+                    <a href="/trip/workspace/1" class="text-slate-400 hover:text-indigo-600 transition"><i class="fa-solid fa-arrow-right-long"></i></a>
+                </div>
             </div>
         </div>
-    </main>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
