@@ -1,4 +1,12 @@
+<<<<<<< frontend
 from flask import Flask, render_template, jsonify, request
+=======
+from flask import Flask, render_template
+from config import Config
+from models.trip import db
+from routes.auth import auth_bp
+from routes.ai import ai_bp
+>>>>>>> main
 
 app = Flask(__name__)
 
@@ -8,7 +16,13 @@ MOCK_TRIPS = [
     {"id": 2, "name": "Tokyo Adventure", "date": "Oct 2026", "cities": 3, "cost": 3500, "img": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf"}
 ]
 
+<<<<<<< frontend
 # --- ROUTES TO CHECK YOUR FRONTEND ---
+=======
+    # Register Blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(ai_bp)
+>>>>>>> main
 
 @app.route('/')
 def index():

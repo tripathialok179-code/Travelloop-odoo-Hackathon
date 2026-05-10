@@ -1,4 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
+from models.trip import Trip
+from models.user import User
 
-# Initialize the database object here so it can be imported by other models
-db = SQLAlchemy()
+__all__ = [
+    "Trip",
+    "User"
+]

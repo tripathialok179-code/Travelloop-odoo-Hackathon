@@ -1,0 +1,26 @@
+# Python bytecode (compiled files)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Environment Variables (Keep your MySQL passwords secret!)
+.env
+.flaskenv
+
+# Database files (if using local SQL dumps or SQLite for testing)
+*.sql
+*.sqlite3
+instance/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# IDE specific files
+.vscode/
+.idea/

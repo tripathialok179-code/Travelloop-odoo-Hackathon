@@ -1,0 +1,27 @@
+/* Custom styles for Traveloop branding */
+:root {
+    --travel-blue: #007bff;
+    --dark-slate: #1e293b;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+}
+
+/* Style for the "Trip Cards" (cite: 46) */
+.trip-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive container for the Dashboard (cite: 33) */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
