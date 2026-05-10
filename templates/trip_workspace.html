@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-20">
+    <div class="lg:col-span-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold" id="trip-title">Loading Trip...</h1>
+            <div class="flex space-x-3">
+                <button onclick="shareTrip()" class="p-3 glass rounded-xl hover:bg-white transition"><i class="fa-solid fa-share-nodes"></i></button> <button class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-semibold">Save Plan</button>
+            </div>
+        </div>
+
+        <div id="itinerary-timeline" class="space-y-6">
+            </div>
+        
+        <button onclick="addNewStop()" class="w-full mt-8 py-6 border-2 border-dashed border-slate-300 rounded-3xl text-slate-400 hover:border-indigo-400 hover:text-indigo-600 transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-plus"></i>
+            <span class="font-bold text-lg">Add New Stop</span> </button>
+    </div>
+
+    <div class="lg:col-span-4 space-y-6">
+        <div class="glass p-6 rounded-3xl sticky top-24">
+            <h3 class="font-bold text-lg mb-4">Trip Budget & Cost</h3>
+            <div class="flex items-end space-x-2 mb-2">
+                <span class="text-3xl font-extrabold text-indigo-600" id="total-budget">$0</span>
+                <span class="text-slate-500 mb-1">Estimated Total</span> </div>
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-4">
+                <div class="bg-indigo-500 h-full w-[45%]"></div>
+            </div>
+            <p class="text-xs text-slate-400 mt-2">45% of your planned budget utilized.</p> </div>
+
+        <div class="glass p-6 rounded-3xl">
+            <h3 class="font-bold text-lg mb-4">Discover Activities</h3>
+            <div class="relative mb-4">
+                <input type="text" id="activity-search" placeholder="Search sights, food..." class="w-full pl-10 pr-4 py-3 glass rounded-xl focus:outline-none"> <i class="fa-solid fa-search absolute left-4 top-4 text-slate-400"></i>
+            </div>
+            <div id="activity-results" class="space-y-3">
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-10">
+    <div class="relative h-[400px] rounded-[3rem] overflow-hidden mb-12 shadow-2xl">
+        <img id="public-banner" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-12 text-white">
+            <h1 class="text-5xl font-bold mb-2" id="public-title">Japanese Winter Odyssey</h1> <p class="text-xl opacity-90" id="public-meta">Shared by Alok • 12 Days • 3 Cities</p>
+        </div>
+    </div>
+
+    <div class="flex justify-between items-center mb-12 glass p-6 rounded-3xl">
+        <div class="flex gap-4">
+            <button class="bg-indigo-600 text-white px-8 py-3 rounded-full font-bold hover:scale-105 transition">
+                <i class="fa-solid fa-clone mr-2"></i> Copy This Trip </button>
+            <button class="bg-white text-slate-700 px-6 py-3 rounded-full font-bold border border-slate-200">
+                <i class="fa-solid fa-share-nodes mr-2"></i> Share </button>
+        </div>
+        <span class="text-slate-400 font-semibold italic text-sm">Read-only view</span> </div>
+
+    <div id="public-itinerary-list" class="space-y-10">
+        </div>
+</div>
+{% endblock %}

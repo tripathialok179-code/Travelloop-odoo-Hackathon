@@ -1,27 +1,69 @@
-/* Custom styles for Traveloop branding */
 :root {
-    --travel-blue: #007bff;
-    --dark-slate: #1e293b;
+    --bg: #050505;
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #007AFF;
+    --text: #ffffff;
+    --text-dim: #888;
 }
 
 body {
+    background: var(--bg);
+    color: var(--text);
     font-family: 'Inter', sans-serif;
-    scroll-behavior: smooth;
+    margin: 0;
+    line-height: 1.6;
 }
 
-/* Style for the "Trip Cards" (cite: 46) */
+/* Glassmorphism Navigation */
+.navbar {
+    height: 80px;
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(25px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container { width: 90%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2rem; }
+
+.logo-orb { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 15px var(--accent); }
+
+.nav-links { display: flex; gap: 30px; list-style: none; align-items: center; }
+
+.nav-links a { text-decoration: none; color: var(--text-dim); font-size: 0.9rem; transition: 0.3s; }
+
+.nav-links a:hover { color: var(--text); }
+
+.btn-cta { background: var(--accent); color: white !important; padding: 10px 20px; border-radius: 12px; font-weight: 600; }
+
+/* Dashboard Cards */
+.grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; padding: 40px 5%; }
+
 .trip-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 400px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    padding: 30px;
+    background-size: cover;
+    background-position: center;
+    transition: 0.4s ease;
 }
 
-.trip-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
+.trip-card:hover { transform: scale(1.02); border-color: var(--accent); }
 
-/* Responsive container for the Dashboard (cite: 33) */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
+/* Workspace Split */
+.workspace-wrapper { display: grid; grid-template-columns: 380px 1fr 320px; height: calc(100vh - 80px); }
+
+.sidebar, .finance-panel { background: var(--card); border-right: 1px solid var(--border); padding: 30px; overflow-y: auto; }
+
+.map-container { position: relative; border-right: 1px solid var(--border); }
+
+.gradient-text { background: linear-gradient(90deg, #007AFF, #A65DFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
