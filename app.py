@@ -1,60 +1,67 @@
-<<<<<<< frontend
-from flask import Flask, render_template, jsonify, request
-=======
-from flask import Flask, render_template
+import os
+from flask import Flask, render_template, jsonify
+from dotenv import load_dotenv
 from config import Config
-from models.trip import db
+from models import db
+
+# Import Blueprints
 from routes.auth import auth_bp
+from routes.trips import trips_bp
 from routes.ai import ai_bp
->>>>>>> main
+from routes.search import search_bp
+from routes.cities import cities_bp
+from routes.share import share_bp
 
-app = Flask(__name__)
+load_dotenv()
 
-# --- MOCK DATA FOR FRONTEND TESTING ---
-MOCK_TRIPS = [
-    {"id": 1, "name": "Paris Getaway", "date": "June 2026", "cities": 1, "cost": 1200, "img": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34"},
-    {"id": 2, "name": "Tokyo Adventure", "date": "Oct 2026", "cities": 3, "cost": 3500, "img": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf"}
-]
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-<<<<<<< frontend
-# --- ROUTES TO CHECK YOUR FRONTEND ---
-=======
-    # Register Blueprints
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(ai_bp)
->>>>>>> main
+    # Initialize Database
+    db.init_app(app)
 
-@app.route('/')
-def index():
-    """Renders the Hero/Landing Page"""
-    return render_template('index.html')
+    # Register Blueprints with appropriate prefixes
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(trips_bp, url_prefix='/api/trips')
+    app.register_blueprint(ai_bp, url_prefix='/api/ai')
+    app.register_blueprint(search_bp, url_prefix='/api/search')
+    app.register_blueprint(cities_bp, url_prefix='/api/cities')
+    app.register_blueprint(share_bp, url_prefix='/api/share')
 
-@app.route('/login')
-def login():
-    """Renders the Login Screen"""
-    return render_template('login.html')
+    # Frontend Page Routes
+    @app.route('/')
+    def index():
+        return render_template('index.html')
 
-@app.route('/dashboard')
-def dashboard():
-    """Renders the Dashboard with Mock Trips"""
-    return render_template('dashboard.html', trips=MOCK_TRIPS)
+    @app.route('/login')
+    def login():
+        return render_template('login.html')
 
-@app.route('/trip/workspace/<int:trip_id>')
-def workspace(trip_id):
-    """Renders the Itinerary Builder"""
-    return render_template('trip_workspace.html', trip_id=trip_id)
+    @app.route('/dashboard')
+    def dashboard():
+        return render_template('dashboard.html')
 
-# --- MOCK API FOR UNSPLASH IMAGES ---
-@app.route('/api/city-image/<city_name>')
-def get_city_image(city_name):
-    """
-    Simulates a backend call to Unsplash.
-    In a real app, you'd use your API key here.
-    """
-    # Placeholder Logic: Returns a high-quality stock photo based on the city name
-    image_url = f"https://source.unsplash.com/featured/?{city_name},travel"
-    return jsonify({"url": image_url})
+    @app.route('/create-trip')
+    def create_trip():
+        return render_template('create_trip.html')
+
+    @app.route('/trip/workspace/<int:trip_id>')
+    def workspace(trip_id):
+        return render_template('trip_workspace.html', trip_id=trip_id)
+
+    # API for City Images (Unsplash Integration)
+    @app.route('/api/city-image/<city_name>')
+    def get_city_image(city_name):
+        # In production, use os.getenv('UNSPLASH_ACCESS_KEY')
+        image_url = f"https://source.unsplash.com/featured/?{city_name},travel"
+        return jsonify({"url": image_url})
+
+    return app
 
 if __name__ == '__main__':
-    print("Traveloop Prototype Running at http://127.0.0.1:5000")
-    app.run(debug=True)
+    app = create_app()
+    with app.app_context():
+        # Create all tables in the MySQL/SQLite database
+        db.create_all()
+    app.run(debug=True, port=5000)
