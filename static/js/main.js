@@ -1,33 +1,32 @@
-// Function to handle Create Trip Form (API Integration)
-document.getElementById('create-trip-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-
-    try {
-        const response = await fetch('/api/trips', { // cite: 14
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            const trip = await response.json();
-            window.location.href = `/trip/workspace/${trip.id}`;
-        } else {
-            const error = await response.json();
-            UI.toast(`Error: ${error.message}`, 'error');
-        }
-    } catch (err) {
-        UI.toast("Network error. Please try again.", "error");
+const UI = {
+    toast: (msg, type) => {
+        const root = document.getElementById('toast-root');
+        if (!root) return;
+        const toast = document.createElement('div');
+        toast.className = `p-4 rounded-xl shadow-lg border ${type === 'error' ? 'bg-red-50 border-red-200 text-red-600' : 'bg-blue-50 border-blue-200 text-blue-600'}`;
+        toast.innerText = msg;
+        root.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
     }
-});
+};
 
-// Animation logic for elements appearing on scroll
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('animate-fade-in');
+async function handleCreateTrip(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const payload = Object.fromEntries(formData);
+
+    const response = await fetch('/api/trips/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
     });
-}, { threshold: 0.1 });
 
-document.querySelectorAll('.glass').forEach(el => observer.observe(el));
+    if (response.ok) {
+        const trip = await response.json();
+        window.location.href = `/trip/workspace/${trip.id}`;
+    } else {
+        UI.toast("Failed to create trip. Check all fields.", "error");
+    }
+}
+
+document.getElementById('create-trip-form')?.addEventListener('submit', handleCreateTrip);
