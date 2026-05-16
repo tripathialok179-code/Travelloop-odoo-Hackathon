@@ -1,32 +1,60 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="max-w-3xl mx-auto px-6 py-12">
-    <div class="glass p-12 rounded-[2.5rem] shadow-2xl">
-        <h1 class="text-4xl font-bold mb-2">Create New Trip</h1> <p class="text-slate-500 mb-10">Set the foundation for your personalized itinerary.</p>
-
-        <form id="create-trip-form" class="space-y-8">
-            <div class="space-y-4">
-                <label class="block text-sm font-bold text-slate-700">Trip Name</label>
-                <input type="text" name="name" placeholder="e.g. Exploring the Swiss Alps" required
-                       class="w-full px-6 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition"> </div>
-
-            <div class="grid grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    <label class="block text-sm font-bold text-slate-700">Start Date</label>
-                    <input type="date" name="start_date" required class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none"> </div>
-                <div class="space-y-4">
-                    <label class="block text-sm font-bold text-slate-700">End Date</label>
-                    <input type="date" name="end_date" required class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none"> </div>
+<div style="max-width: 600px; margin: 0 auto; padding-top: 2rem;">
+    <h1 style="margin-bottom: 0.5rem; text-align: center;">Plan Your Journey</h1>
+    <p style="margin-bottom: 2rem; text-align: center;">Enter your trip details below to build your itinerary.</p>
+    
+    <div class="card">
+        <div id="dynamic-dest-img" style="height: 150px; background: var(--card-border); background-size: cover; background-position: center; border-radius: 12px; margin-bottom: 1.5rem; transition: background 0.5s ease;"></div>
+        <form action="{{ url_for('views.create_trip') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label">Trip Title</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g., Summer Escape" required>
             </div>
-
-            <div class="space-y-4">
-                <label class="block text-sm font-bold text-slate-700">Description (Optional)</label>
-                <textarea name="description" rows="3" placeholder="What are your goals for this trip?"
-                          class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none"></textarea> </div>
-
-            <button type="submit" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-100 hover:bg-indigo-700 transform hover:-translate-y-1 transition-all">
-                Generate My Itinerary </button>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">Start Point</label>
+                    <input type="text" name="start_point" id="ai-start" class="form-control" placeholder="e.g., Delhi" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destination</label>
+                    <input type="text" id="ai-destination" name="destination" class="form-control" placeholder="e.g., Rajasthan" value="{{ request.args.get('destination', '') }}" onblur="fetchCityImage(this.value, 'dynamic-dest-img')" required>
+                </div>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">Transport Mode</label>
+                    <select name="transport_mode" id="ai-transport" class="form-control" onchange="document.getElementById('vehicle-group').style.display = this.value === 'Road' ? 'block' : 'none';">
+                        <option value="Flight">Flight</option>
+                        <option value="Train">Train</option>
+                        <option value="Bus">Bus</option>
+                        <option value="Road">By Road (Car/Bike)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="vehicle-group" style="display: none;">
+                    <label class="form-label">Vehicle Model</label>
+                    <input type="text" name="vehicle_model" id="ai-vehicle" class="form-control" placeholder="e.g., Innova">
+                </div>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">No. of People</label>
+                    <input type="number" name="num_people" id="ai-people" class="form-control" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Days</label>
+                    <input type="number" name="days" id="ai-days" class="form-control" placeholder="7" value="7" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Create Trip</button>
         </form>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+    const dest = document.getElementById('ai-destination').value;
+    if (dest) fetchCityImage(dest, 'dynamic-dest-img');
+</script>
 {% endblock %}

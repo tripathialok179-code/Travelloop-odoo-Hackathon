@@ -9,7 +9,7 @@
             <span style="color:var(--accent)">✨</span> AI Daily Budget Estimator
         </h3>
         <div style="display: flex; gap: 0.5rem;">
-            <button class="btn btn-secondary" style="border-color: var(--accent); color: var(--accent);" onclick="document.getElementById('manage-budget-result').innerHTML = '<p style=\'color: var(--accent); font-weight: 500;\'>✨ Gemini is recalculating...</p>'; generateTripBudget({{ trip.id }}, 'manage-budget-result')">Regenerate Budget Tiers</button>
+            <button class="btn btn-secondary" style="border-color: var(--accent); color: var(--accent);" onclick="document.getElementById('manage-budget-result').innerHTML = '<p style='color: var(--accent); font-weight: 500;'>✨ Gemini is recalculating...</p>'; generateTripBudget({{ trip.id }}, 'manage-budget-result')">Regenerate Budget Tiers</button>
         </div>
     </div>
     <div id="manage-budget-result" style="color: var(--text-main);">
@@ -25,7 +25,7 @@
                         <p style="font-weight: 600;">₹ {{ ai_budget.breakdown.food }}</p>
                     </div>
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
-                        <p style="font-size: 0.8rem; color: var(--text-muted);">🚗 Transport</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">🚕 Transport</p>
                         <p style="font-weight: 600;">₹ {{ ai_budget.breakdown.transport }}</p>
                     </div>
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
@@ -33,7 +33,7 @@
                         <p style="font-weight: 600;">₹ {{ ai_budget.breakdown.accommodation }}</p>
                     </div>
                     <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
-                        <p style="font-size: 0.8rem; color: var(--text-muted);">🎟️ Activities</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">🎟 Activities</p>
                         <p style="font-weight: 600;">₹ {{ ai_budget.breakdown.activities }}</p>
                     </div>
                 </div>
