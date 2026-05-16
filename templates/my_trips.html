@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>My Trips</h1>
+    <a href="{{ url_for('views.create_trip') }}" class="btn btn-primary">+ Generate AI Trip</a>
+</div>
+
+{% if trips %}
+<div class="grid grid-3">
+    {% for trip in trips %}
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <div id="trip-img-{{ loop.index }}" style="height: 120px; background: var(--card-border); background-size: cover; background-position: center;"></div>
+        <div style="padding: 1.5rem;">
+            <h3>{{ trip.title }}</h3>
+            <p style="font-size: 0.875rem; margin-bottom: 1rem;">{{ trip.start_date.strftime('%b %d') if trip.start_date else 'TBD' }}</p>
+            <a href="{{ url_for('views.itinerary_view', trip_id=trip.id) }}" class="btn btn-secondary" style="width: 100%;">Manage Trip</a>
+            <form action="{{ url_for('views.delete_trip', trip_id=trip.id) }}" method="POST" style="margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-secondary" style="width: 100%; border-color: var(--danger); color: var(--danger);">Delete Trip</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 4rem;">
+    <h3 style="margin-bottom: 1rem;">You don't have any trips.</h3>
+    <a href="{{ url_for('views.create_trip') }}" class="btn btn-primary">Generate a new trip</a>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+    {% for trip in trips %}
+    fetchCityImage('{{ trip.destination or trip.title }}', 'trip-img-{{ loop.index }}');
+    {% endfor %}
+</script>
+{% endblock %}

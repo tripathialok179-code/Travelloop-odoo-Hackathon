@@ -64,7 +64,12 @@ def my_trips():
 def itinerary_builder(trip_id):
     trip = Trip.query.get_or_404(trip_id)
     import json
-    ai_logistics = json.loads(trip.ai_logistics) if trip.ai_logistics else None
+    ai_logistics = None
+    if trip.ai_logistics:
+        try:
+            ai_logistics = json.loads(trip.ai_logistics)
+        except:
+            pass
     return render_template('itinerary_builder.html', trip=trip, ai_logistics=ai_logistics)
 
 @views_bp.route('/itinerary/<int:trip_id>')
@@ -72,7 +77,12 @@ def itinerary_builder(trip_id):
 def itinerary_view(trip_id):
     trip = Trip.query.get_or_404(trip_id)
     import json
-    ai_summary = json.loads(trip.ai_summary) if trip.ai_summary else None
+    ai_summary = None
+    if trip.ai_summary:
+        try:
+            ai_summary = json.loads(trip.ai_summary)
+        except:
+            pass
     return render_template('itinerary_view.html', trip=trip, ai_summary=ai_summary)
 
 @views_bp.route('/delete-trip/<int:trip_id>', methods=['POST'])
@@ -93,15 +103,29 @@ def city_search():
 def budget(trip_id):
     trip = Trip.query.get_or_404(trip_id)
     import json
-    ai_budget = json.loads(trip.ai_budget) if trip.ai_budget else None
-    return render_template('budget.html', trip=trip, ai_budget=ai_budget)
+    ai_budget_data = None
+    if trip.ai_budget:
+        try:
+            parsed = json.loads(trip.ai_budget)
+            if isinstance(parsed, dict) and "type" in parsed:
+                ai_budget_data = parsed
+            else:
+                ai_budget_data = {"type": "selected", "data": parsed}
+        except:
+            pass
+    return render_template('budget.html', trip=trip, ai_budget_data=ai_budget_data)
 
 @views_bp.route('/trip/<int:trip_id>/packing')
 @login_required
 def packing(trip_id):
     trip = Trip.query.get_or_404(trip_id)
     import json
-    ai_packing = json.loads(trip.ai_packing) if trip.ai_packing else None
+    ai_packing = None
+    if trip.ai_packing:
+        try:
+            ai_packing = json.loads(trip.ai_packing)
+        except:
+            pass
     return render_template('packing.html', trip=trip, ai_packing=ai_packing)
 
 @views_bp.route('/shared/<int:trip_id>')

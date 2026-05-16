@@ -1,24 +1,30 @@
-
-app.register_blueprint(ai_bp)from flask import Flask
-from flask_cors import CORS
-
-from routes.auth_routes import auth_bp
-from routes.trip_routes import trip_bp
-from routes.ai_routes import ai_bp
-from routes.budget_routes import budget_bp
-from routes.notes_routes import notes_bp
+from flask import Flask, g, session
+from config import Config
+from models import db
+from models.user import User
+from routes.views import views_bp
+from routes.api import api_bp
+from routes.auth import auth_bp
 
 app = Flask(__name__)
-CORS(app)
+app.config.from_object(Config)
 
-app.register_blueprint(auth_bp)
-app.register_blueprint(trip_bp)
-app.register_blueprint(budget_bp)
-app.register_blueprint(notes_bp)
+db.init_app(app)
 
-@app.route('/')
-def home():
-    return {'message': 'TravelLoop API Running'}
+@app.before_request
+def load_logged_in_user():
+    user_id = session.get('user_id')
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = User.query.get(user_id)
+
+with app.app_context():
+    db.create_all()
+
+app.register_blueprint(views_bp)
+app.register_blueprint(api_bp, url_prefix='/api')
+app.register_blueprint(auth_bp, url_prefix='/auth')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

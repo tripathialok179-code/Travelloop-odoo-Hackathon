@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="hero-header" id="city-search-header">
+    <div>
+        <h1>Search Global Destinations</h1>
+        <p>Find inspiration anywhere in the world using OpenStreetMap's massive database.</p>
+    </div>
+</div>
+
+<div class="grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="card" style="margin-bottom: 2rem;">
+        <h3 style="margin-bottom: 1rem;">Search using OpenStreetMap</h3>
+        <div style="display: flex; gap: 1rem;">
+            <input type="text" id="city-input" class="form-control" placeholder="Search any city in the world..." onkeyup="searchCityMap(this.value, 'search-results')">
+            <button class="btn btn-primary">Search</button>
+        </div>
+        <ul id="search-results" style="list-style: none; padding: 0; margin-top: 1rem; max-height: 200px; overflow-y: auto; background: var(--bg-color); border-radius: 8px;"></ul>
+    </div>
+    <div class="card" style="padding: 0; overflow: hidden; min-height: 300px;">
+        <div id="explore-map" style="width: 100%; height: 100%; z-index: 1;"></div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    fetchCityImage('Global Travel Destinations', 'city-search-header');
+
+    // Init Map
+    window.map = L.map('explore-map').setView([20.5937, 78.9629], 3); // Global view
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(window.map);
+
+    let mapMarker = null;
+    window.map.on('click', async function(e) {
+        const lat = e.latlng.lat;
+        const lon = e.latlng.lng;
+        
+        if (mapMarker) {
+            window.map.removeLayer(mapMarker);
+        }
+        mapMarker = L.marker([lat, lon]).addTo(window.map);
+        
+        const input = document.getElementById('city-input');
+        input.value = 'Locating pin...';
+        
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const data = await res.json();
+            
+            if (data && data.display_name) {
+                // Try to get a clean city/state name for the input
+                let shortName = data.display_name;
+                if (data.address) {
+                    shortName = data.address.city || data.address.town || data.address.state || data.display_name.split(',')[0];
+                }
+                input.value = shortName;
+                
+                let popupContent = `
+                    <div style="text-align: center; font-family: var(--font-body);">
+                        <strong style="font-size: 1.1rem;">${shortName}</strong><br>
+                        <a href="/create-trip?destination=${encodeURIComponent(shortName)}" style="display: inline-block; margin-top: 10px; background: var(--accent); color: white; padding: 0.5rem 1rem; border-radius: 8px; font-weight: bold; text-decoration: none;">Plan Trip Here</a>
+                    </div>
+                `;
+                mapMarker.bindPopup(popupContent).openPopup();
+            } else {
+                input.value = 'Unknown Location';
+                mapMarker.bindPopup('Unknown Location').openPopup();
+            }
+        } catch (err) {
+            input.value = 'Error resolving location';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,91 +1,49 @@
-from flask import Blueprint, request, jsonify
-from app.extensions import db
-from app.models.user import User
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, g
 from werkzeug.security import generate_password_hash, check_password_hash
-import uuid
+from models import db
+from models.user import User
 
-# Simple in-memory token store (MVP only)
-# In production use JWT (flask-jwt-extended)
-tokens = {}
+auth_bp = Blueprint('auth', __name__)
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
-
-
-# REGISTER
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    data = request.get_json()
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
 
-    name = data.get('name')
-    email = data.get('email')
-    password = data.get('password')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            flash('Email already exists.', category='error')
+        elif len(password) < 6:
+            flash('Password must be at least 6 characters.', category='error')
+        else:
+            new_user = User(name=name, email=email, password_hash=generate_password_hash(password))
+            db.session.add(new_user)
+            db.session.commit()
+            session['user_id'] = new_user.id
+            flash('Account created!', category='success')
+            return redirect(url_for('views.dashboard'))
 
-    if not name or not email or not password:
-        return jsonify({"message": "All fields are required"}), 400
+    return render_template('login.html')
 
-    existing_user = User.query.filter_by(email=email).first()
-    if existing_user:
-        return jsonify({"message": "User already exists"}), 409
-
-    user = User(name=name, email=email)
-    user.password_hash = generate_password_hash(password)
-
-    db.session.add(user)
-    db.session.commit()
-
-    return jsonify({"message": "User registered successfully"}), 201
-
-
-# LOGIN
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    data = request.get_json()
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
 
-    email = data.get('email')
-    password = data.get('password')
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password_hash, password):
+            session['user_id'] = user.id
+            flash('Logged in successfully!', category='success')
+            return redirect(url_for('views.dashboard'))
+        else:
+            flash('Incorrect email or password.', category='error')
 
-    if not email or not password:
-        return jsonify({"message": "Email and password required"}), 400
+    return render_template('login.html')
 
-    user = User.query.filter_by(email=email).first()
-
-    if not user or not check_password_hash(user.password_hash, password):
-        return jsonify({"message": "Invalid credentials"}), 401
-
-    # generate simple token
-    token = str(uuid.uuid4())
-    tokens[token] = user.id
-
-    return jsonify({
-        "message": "Login successful",
-        "token": token,
-        "user": user.to_dict()
-    }), 200
-
-
-# GET CURRENT USER (protected)
-@auth_bp.route('/me', methods=['GET'])
-def me():
-    token = request.headers.get('Authorization')
-
-    if not token or token not in tokens:
-        return jsonify({"message": "Unauthorized"}), 401
-
-    user_id = tokens[token]
-    user = User.query.get(user_id)
-
-    if not user:
-        return jsonify({"message": "User not found"}), 404
-
-    return jsonify(user.to_dict()), 200
-
-
-# LOGOUT
-@auth_bp.route('/logout', methods=['POST'])
+@auth_bp.route('/logout')
 def logout():
-    token = request.headers.get('Authorization')
-
-    if token in tokens:
-        del tokens[token]
-
-    return jsonify({"message": "Logged out successfully"}), 200
+    session.pop('user_id', None)
+    return redirect(url_for('views.login'))
