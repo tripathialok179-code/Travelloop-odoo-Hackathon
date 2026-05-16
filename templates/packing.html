@@ -1,0 +1,38 @@
+{% extends 'trip_layout.html' %}
+{% block trip_content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h2>AI Packing Assistant</h2>
+</div>
+
+<div class="card" style="margin-bottom: 2rem; border-color: var(--accent);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color:var(--accent)">✨</span> Destination Climate & Essentials Checklist
+        </h3>
+    </div>
+    <div id="manage-packing-result" style="color: var(--text-main);">
+        {% if ai_packing %}
+        <p style="color: var(--accent); font-weight: 500;">Your smart packing list. Click ❌ to remove items or manually
+            add new ones at the bottom.</p>
+        {% else %}
+        <p style="color: var(--accent); font-weight: 500;">✨ Gemini is analyzing the climate and compiling your
+            essentials...</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+{% block trip_scripts %}
+<script>
+    window.currentTripId = {{ trip.id }};
+    {% if ai_packing %}
+    // Load persisted list
+    window.currentPackingList = {{ ai_packing.packing_items | tojson }};
+    renderPackingList('manage-packing-result');
+    {% else %}
+    document.addEventListener("DOMContentLoaded", function () {
+        generatePackingList({{ trip.id }}, 'manage-packing-result');
+        });
+    {% endif %}
+</script>
+{% endblock %}

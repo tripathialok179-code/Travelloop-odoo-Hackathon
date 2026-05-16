@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div id="trip-header" class="hero-header">
+    <div>
+        <h1>{{ trip.title }}</h1>
+        <p>{{ trip.start_date.strftime('%b %d') if trip.start_date else 'AI Generated Plan' }}</p>
+    </div>
+</div>
+<div class="sub-nav">
+    <a href="{{ url_for('views.itinerary_view', trip_id=trip.id) }}">AI Overview</a>
+    <a href="{{ url_for('views.itinerary_builder', trip_id=trip.id) }}">Map & Route</a>
+    <a href="{{ url_for('views.budget', trip_id=trip.id) }}">Cost Breakdown</a>
+    <a href="{{ url_for('views.packing', trip_id=trip.id) }}">Packing</a>
+    <a href="{{ url_for('views.shared_trip', trip_id=trip.id) }}">Share</a>
+</div>
+{% block trip_content %}{% endblock %}
+{% endblock %}
+{% block scripts %}
+<script>
+    fetchCityImage('{{ trip.destination or trip.title }}', 'trip-header');
+</script>
+{% block trip_scripts %}{% endblock %}
+{% endblock %}

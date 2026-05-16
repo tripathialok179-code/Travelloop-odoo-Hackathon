@@ -1,0 +1,62 @@
+{% extends 'trip_layout.html' %}
+{% block trip_content %}
+<h2>Detailed Cost Breakdown</h2>
+<p style="margin-bottom: 2rem;">Every single transportation, lodging, food, and activity cost calculated dynamically for your group of {{ trip.num_people }}.</p>
+
+<div class="card" style="margin-bottom: 2rem; border-color: var(--accent);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color:var(--accent)">✨</span> AI Daily Budget Estimator
+        </h3>
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" style="border-color: var(--accent); color: var(--accent);" onclick="document.getElementById('manage-budget-result').innerHTML = '<p style=\'color: var(--accent); font-weight: 500;\'>✨ Gemini is recalculating...</p>'; generateTripBudget({{ trip.id }}, 'manage-budget-result')">Regenerate Budget Tiers</button>
+        </div>
+    </div>
+    <div id="manage-budget-result" style="color: var(--text-main);">
+        {% if ai_budget %}
+            <div class="card" style="border: 2px solid var(--accent); padding: 1.5rem; background: rgba(79, 70, 229, 0.03);">
+                <p style="text-transform: uppercase; font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">Current Active Plan: {{ ai_budget.tier_name }}</p>
+                <h3 style="color: var(--accent); font-size: 2.5rem; margin: 0.5rem 0;">₹ {{ ai_budget.total_cost }}</h3>
+                <p style="font-size: 0.9rem; margin-bottom: 2rem; opacity: 0.8;">Comprehensive estimate for {{ trip.days }} days and {{ trip.num_people }} traveler(s)</p>
+                
+                <div class="grid grid-4" style="gap: 1rem; margin-bottom: 2rem;">
+                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">🍔 Food</p>
+                        <p style="font-weight: 600;">₹ {{ ai_budget.breakdown.food }}</p>
+                    </div>
+                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">🚗 Transport</p>
+                        <p style="font-weight: 600;">₹ {{ ai_budget.breakdown.transport }}</p>
+                    </div>
+                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">🏨 Lodging</p>
+                        <p style="font-weight: 600;">₹ {{ ai_budget.breakdown.accommodation }}</p>
+                    </div>
+                    <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">🎟️ Activities</p>
+                        <p style="font-weight: 600;">₹ {{ ai_budget.breakdown.activities }}</p>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">💡 Tier-Specific Travel Tips</h4>
+                <ul style="padding-left: 1.5rem; color: var(--text-muted);">
+                {% for tip in ai_budget.specific_tips %}
+                    <li style="margin-bottom: 0.5rem;">{{ tip }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p style="color: var(--accent); font-weight: 500;">✨ Gemini is calculating your comprehensive budget options...</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block trip_scripts %}
+{% if not ai_budget %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        generateTripBudget({{ trip.id }}, 'manage-budget-result');
+    });
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'trip_layout.html' %}
+{% block trip_content %}
+<h2>Comprehensive AI Breakdown</h2>
+<p style="margin-bottom: 2rem;">Review your trip specifics or dynamically generate AI insights for {{ trip.destination }}.</p>
+
+<!-- NEW AI INSIGHTS CARD -->
+<div class="card" style="margin-bottom: 2rem; border-color: var(--accent);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color:var(--accent)">✨</span> Destination Insights & Transport Guide
+        </h3>
+    </div>
+    <div id="manage-summary-result" style="color: var(--text-main);">
+        {% if ai_summary %}
+            <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 1.5rem;">{{ ai_summary.summary }}</p>
+            <div style="background: rgba(0,0,0,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h4 style="color: var(--accent); margin-bottom: 0.5rem;">✨ Best Time To Visit</h4>
+                <p>{{ ai_summary.best_time_to_visit }}</p>
+            </div>
+            <h4>Transportation Options</h4>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem; color: var(--text-muted);">
+            {% for opt in ai_summary.transportation_options %}
+                <li style="margin-bottom: 0.5rem;">{{ opt }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: var(--accent); font-weight: 500;">✨ Gemini is generating your trip summary automatically...</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block trip_scripts %}
+{% if not ai_summary %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        generateTripSummary({{ trip.id }}, 'manage-summary-result');
+    });
+</script>
+{% endif %}
+{% endblock %}
