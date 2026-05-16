@@ -13,7 +13,8 @@
         </div>
     </div>
     <div id="manage-budget-result" style="color: var(--text-main);">
-        {% if ai_budget %}
+        {% if ai_budget_data and ai_budget_data.type == 'selected' %}
+            {% set ai_budget = ai_budget_data.data %}
             <div class="card" style="border: 2px solid var(--accent); padding: 1.5rem; background: rgba(79, 70, 229, 0.03);">
                 <p style="text-transform: uppercase; font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">Current Active Plan: {{ ai_budget.tier_name }}</p>
                 <h3 style="color: var(--accent); font-size: 2.5rem; margin: 0.5rem 0;">₹ {{ ai_budget.total_cost }}</h3>
@@ -45,6 +46,13 @@
                 {% endfor %}
                 </ul>
             </div>
+        {% elif ai_budget_data and ai_budget_data.type == 'options' %}
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const data = {{ ai_budget_data.data | tojson | safe }};
+                    renderBudgetOptions(data, {{ trip.id }}, 'manage-budget-result');
+                });
+            </script>
         {% else %}
             <p style="color: var(--accent); font-weight: 500;">✨ Gemini is calculating your comprehensive budget options...</p>
         {% endif %}
@@ -52,7 +60,7 @@
 </div>
 {% endblock %}
 {% block trip_scripts %}
-{% if not ai_budget %}
+{% if not ai_budget_data %}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         generateTripBudget({{ trip.id }}, 'manage-budget-result');

@@ -108,7 +108,10 @@ def gemini_manage_budget():
             result = response.json()
             text = result['candidates'][0]['content']['parts'][0]['text']
             text = text.replace('```json', '').replace('```', '').strip()
-            return jsonify(json.loads(text)), 200
+            data_json = json.loads(text)
+            trip.ai_budget = json.dumps({"type": "options", "data": data_json.get('budget_tiers', data_json)})
+            db.session.commit()
+            return jsonify(data_json), 200
         return jsonify({"error": "Failed"}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -156,7 +159,7 @@ def save_trip_budget():
     trip = Trip.query.get(trip_id)
     if not trip: return jsonify({"error": "No trip"}), 404
     import json
-    trip.ai_budget = json.dumps(selected_tier)
+    trip.ai_budget = json.dumps({"type": "selected", "data": selected_tier})
     cost_str = str(selected_tier.get('total_cost', '0')).replace(',', '').replace('₹', '').replace(' ', '').replace('INR', '')
     try:
         trip.budget = float(cost_str)
